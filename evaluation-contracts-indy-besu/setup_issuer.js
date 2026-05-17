@@ -14,7 +14,7 @@ const PRIVATE_KEY = eth.fromAddressPrivateKey;
 
 // IDs fixos usados pelos workloads
 const ISSUER_DID      = 'did:indy2:indy_besu:MRDxoJ2Mz3ZuyqaqsjVTdN';
-const UPDATE_DID      = 'did:indy2:indy_besu:BenchmarkUpdateDDDXyz23';
+const UPDATE_DID      = 'did:indy2:indy_besu:BnchmarkUpdtXyzABCDEFG';
 const SCHEMA_ID       = `${ISSUER_DID}/anoncreds/v0/SCHEMA/BenchSchema/1.0`;
 const CRED_DEF_ID     = `${ISSUER_DID}/anoncreds/v0/CLAIM_DEF/${SCHEMA_ID}/BenchCredDef`;
 
