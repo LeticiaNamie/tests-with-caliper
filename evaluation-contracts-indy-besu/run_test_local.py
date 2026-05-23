@@ -4,7 +4,7 @@ from datetime import datetime
 
 # Caminhos para cada configuração de função
 BENCHMARK_FILES = {
-    "createCredentialDefinition": 'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
+    "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml'
 }
 
 BENCHMARK_FILES_BAK = {
@@ -12,7 +12,6 @@ BENCHMARK_FILES_BAK = {
     "updateDid": 'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
     "createSchema": 'benchmarks/scenario/SchemaRegistry/config.yaml',
     "createCredentialDefinition": 'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
-    "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
     "createOrUpdateEntry": 'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml'
 }
 
@@ -38,7 +37,7 @@ def update_tps_in_file(file_path, tps):
 def run_test(tps, function_name, benchmark_file):
     update_tps_in_file(benchmark_file, tps)
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_dir = f"src/reports/{function_name}"
+    report_dir = f"evaluation-contracts-indy-besu/src/reports/{function_name}"
     os.makedirs(report_dir, exist_ok=True)
     report_path = os.path.join(report_dir, f"{function_name}_report_{tps}_{timestamp}.html")
     cmd = [
@@ -85,6 +84,21 @@ if __name__ == "__main__":
             if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
                 print("⏳ Aguardando 3s antes da próxima função...")
                 time.sleep(3)
+        if batch < NUM_BATCHES:
+            print(f"\n⏳ Aguardando 3 minutos antes do batch {batch + 1}...")
+            time.sleep(180)
+    
+    time.sleep(180)
+
+    crr_function = "createRevocationRegistry"
+    crr_file = BENCHMARK_FILES[crr_function]
+    print(f"\n{'='*50}")
+    print(f"🔁 Iniciando batches para: {crr_function}")
+    print(f"{'='*50}")
+    for batch in range(1, NUM_BATCHES + 1):
+        print(f"\n🔁 Batch {batch}/{NUM_BATCHES} — {crr_function}")
+        for tps in TPS_LIST:
+            run_test(tps, crr_function, crr_file)
         if batch < NUM_BATCHES:
             print(f"\n⏳ Aguardando 3 minutos antes do batch {batch + 1}...")
             time.sleep(180)
