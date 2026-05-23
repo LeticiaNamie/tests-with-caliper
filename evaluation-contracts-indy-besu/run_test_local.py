@@ -70,35 +70,24 @@ def setup_issuer():
 if __name__ == "__main__":
     import time
 
-    NUM_BATCHES = 5
-
     setup_issuer()
-    for batch in range(1, NUM_BATCHES + 1):
-        print(f"\n{'='*50}")
-        print(f"🔁 Batch {batch}/{NUM_BATCHES}")
-        print(f"{'='*50}")
-        for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
-            print(f"\n🚀 Iniciando testes para função: {function_name}")
-            for tps in TPS_LIST:
-                run_test(tps, function_name, benchmark_file)
-            if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
-                print("⏳ Aguardando 3s antes da próxima função...")
-                time.sleep(3)
-        if batch < NUM_BATCHES:
-            print(f"\n⏳ Aguardando 3 minutos antes do batch {batch + 1}...")
-            time.sleep(180)
-    
-    time.sleep(180)
 
     crr_function = "createRevocationRegistry"
     crr_file = BENCHMARK_FILES[crr_function]
     print(f"\n{'='*50}")
-    print(f"🔁 Iniciando batches para: {crr_function}")
+    print(f"🚀 Iniciando testes para função: {crr_function}")
     print(f"{'='*50}")
-    for batch in range(1, NUM_BATCHES + 1):
-        print(f"\n🔁 Batch {batch}/{NUM_BATCHES} — {crr_function}")
+    for tps in TPS_LIST:
+        run_test(tps, crr_function, crr_file)
+        time.sleep(5)  # Pequena pausa entre os testes de TPS
+
+    print(f"\n⏳ Aguardando 5 minutos antes das demais funções...")
+    time.sleep(300)
+
+    for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
+        print(f"\n🚀 Iniciando testes para função: {function_name}")
         for tps in TPS_LIST:
-            run_test(tps, crr_function, crr_file)
-        if batch < NUM_BATCHES:
-            print(f"\n⏳ Aguardando 3 minutos antes do batch {batch + 1}...")
-            time.sleep(180)
+            run_test(tps, function_name, benchmark_file)
+        if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
+            print("⏳ Aguardando 5s antes da próxima função...")
+            time.sleep(5)
