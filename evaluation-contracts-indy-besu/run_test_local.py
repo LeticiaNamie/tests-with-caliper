@@ -69,8 +69,22 @@ def setup_issuer():
 
 # Executa todos os testes
 if __name__ == "__main__":
+    import time
+
+    NUM_BATCHES = 5
+
     setup_issuer()
-    for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
-        print(f"\n🚀 Iniciando testes para função: {function_name}")
-        for tps in TPS_LIST:
-            run_test(tps, function_name, benchmark_file)
+    for batch in range(1, NUM_BATCHES + 1):
+        print(f"\n{'='*50}")
+        print(f"🔁 Batch {batch}/{NUM_BATCHES}")
+        print(f"{'='*50}")
+        for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
+            print(f"\n🚀 Iniciando testes para função: {function_name}")
+            for tps in TPS_LIST:
+                run_test(tps, function_name, benchmark_file)
+            if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
+                print("⏳ Aguardando 3s antes da próxima função...")
+                time.sleep(3)
+        if batch < NUM_BATCHES:
+            print(f"\n⏳ Aguardando 3 minutos antes do batch {batch + 1}...")
+            time.sleep(180)
