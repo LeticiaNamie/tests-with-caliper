@@ -11,6 +11,10 @@ BENCHMARK_FILES_BAK = {
     "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
     "updateDid": 'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
     "createSchema": 'benchmarks/scenario/SchemaRegistry/config.yaml',
+}
+
+BENCHMARK_FILES_SEPARATE = {
+    "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
     "createCredentialDefinition": 'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
     "createOrUpdateEntry": 'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml'
 }
@@ -72,17 +76,14 @@ if __name__ == "__main__":
 
     setup_issuer()
 
-    crr_function = "createRevocationRegistry"
-    crr_file = BENCHMARK_FILES[crr_function]
-    print(f"\n{'='*50}")
-    print(f"🚀 Iniciando testes para função: {crr_function}")
-    print(f"{'='*50}")
-    for tps in TPS_LIST:
-        run_test(tps, crr_function, crr_file)
-        time.sleep(5)  # Pequena pausa entre os testes de TPS
-
-    print(f"\n⏳ Aguardando 5 minutos antes das demais funções...")
-    time.sleep(300)
+    for function_name, benchmark_file in BENCHMARK_FILES_SEPARATE.items():
+        print(f"\n{'='*50}")
+        print(f"🚀 Iniciando testes para função: {function_name}")
+        print(f"{'='*50}")
+        for tps in TPS_LIST:
+            run_test(tps, function_name, benchmark_file)
+        print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
+        time.sleep(600)
 
     for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
         print(f"\n🚀 Iniciando testes para função: {function_name}")
