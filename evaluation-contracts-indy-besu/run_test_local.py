@@ -15,7 +15,8 @@ BENCHMARK_FILES_BAK = {
 
 BENCHMARK_FILES_SEPARATE = {
     "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
-    "createCredentialDefinition": 'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml'
+    "createCredentialDefinition": 'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
+    "createOrUpdateEntry": 'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml'
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
@@ -83,3 +84,11 @@ if __name__ == "__main__":
             run_test(tps, function_name, benchmark_file)
         print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
         time.sleep(600)
+
+    for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
+        print(f"\n🚀 Iniciando testes para função: {function_name}")
+        for tps in TPS_LIST:
+            run_test(tps, function_name, benchmark_file)
+        if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
+            print("⏳ Aguardando 5s antes da próxima função...")
+            time.sleep(5)
