@@ -76,19 +76,7 @@ if __name__ == "__main__":
 
     setup_issuer()
 
-    for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
-        print(f"\n🚀 Iniciando testes para função: {function_name}")
-        for tps in TPS_LIST:
-            run_test(tps, function_name, benchmark_file)
-            print("⏳ Aguardando 5s antes do próximo TPS...")
-            time.sleep(30)
-        if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
-            print("⏳ Aguardando 1 minuto antes da próxima função...")
-            time.sleep(120)
-
     for function_name, benchmark_file in BENCHMARK_FILES_SEPARATE.items():
-        print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
-        time.sleep(600)
         print(f"\n{'='*50}")
         print(f"🚀 Iniciando testes para função: {function_name}")
         print(f"{'='*50}")
@@ -96,3 +84,15 @@ if __name__ == "__main__":
             run_test(tps, function_name, benchmark_file)
             print("⏳ Aguardando 5s antes do próximo TPS...")
             time.sleep(5)
+        print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
+        time.sleep(600)
+
+    for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
+        print(f"\n🚀 Iniciando testes para função: {function_name}")
+        for tps in TPS_LIST:
+            run_test(tps, function_name, benchmark_file)
+            print("⏳ Aguardando 5s antes do próximo TPS...")
+            time.sleep(5)
+        if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
+            print("⏳ Aguardando 1 minuto antes da próxima função...")
+            time.sleep(120)
