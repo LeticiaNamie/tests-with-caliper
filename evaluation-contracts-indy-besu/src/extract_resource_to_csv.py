@@ -17,6 +17,10 @@ for script_name in SCRIPT_NAMES:
         print(f"⚠ CSV não encontrado, pulando: {input_csv_path}")
         continue
 
+    if os.path.getsize(input_csv_path) == 0:
+        print(f"⚠ CSV vazio, pulando: {input_csv_path}")
+        continue
+
     df = pd.read_csv(input_csv_path)
     df['Rate'] = pd.to_numeric(df['Rate'], errors='coerce')
 
