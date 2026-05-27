@@ -75,6 +75,15 @@ if __name__ == "__main__":
 
     setup_issuer()
 
+    for function_name, benchmark_file in BENCHMARK_FILES_SEPARATE.items():
+        print(f"\n{'='*50}")
+        print(f"🚀 Iniciando testes para função: {function_name}")
+        print(f"{'='*50}")
+        for tps in TPS_LIST:
+            run_test(tps, function_name, benchmark_file)
+        print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
+        time.sleep(600)
+
     for function_name, benchmark_file in BENCHMARK_FILES_BAK.items():
         print(f"\n🚀 Iniciando testes para função: {function_name}")
         for tps in TPS_LIST:
