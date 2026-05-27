@@ -8,7 +8,8 @@ BENCHMARK_FILES = {
 }
 
 BENCHMARK_FILES_BAK = {
-    "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml'
+    "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
+    "updateDid": 'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml'
 }
 
 BENCHMARK_FILES_SEPARATE = {
