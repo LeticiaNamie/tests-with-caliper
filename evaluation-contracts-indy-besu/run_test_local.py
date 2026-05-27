@@ -39,7 +39,7 @@ def update_tps_in_file(file_path, tps):
 def run_test(tps, function_name, benchmark_file):
     update_tps_in_file(benchmark_file, tps)
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    report_dir = f"evaluation-contracts-indy-besu/src/reports/{function_name}"
+    report_dir = f"src/reports/{function_name}"
     os.makedirs(report_dir, exist_ok=True)
     report_path = os.path.join(report_dir, f"{function_name}_report_{tps}_{timestamp}.html")
     cmd = [
