@@ -79,6 +79,7 @@ if __name__ == "__main__":
         print(f"\n🚀 Iniciando testes para função: {function_name}")
         for tps in TPS_LIST:
             run_test(tps, function_name, benchmark_file)
+            time.sleep(5)
         if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
             print("⏳ Aguardando 5s antes da próxima função...")
-            time.sleep(5)
+            time.sleep(60)
