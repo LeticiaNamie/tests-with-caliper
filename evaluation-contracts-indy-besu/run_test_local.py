@@ -81,10 +81,10 @@ if __name__ == "__main__":
         for tps in TPS_LIST:
             run_test(tps, function_name, benchmark_file)
             print("⏳ Aguardando 5s antes do próximo TPS...")
-            time.sleep(5)
+            time.sleep(30)
         if list(BENCHMARK_FILES_BAK.keys())[-1] != function_name:
             print("⏳ Aguardando 1 minuto antes da próxima função...")
-            time.sleep(60)
+            time.sleep(120)
 
     for function_name, benchmark_file in BENCHMARK_FILES_SEPARATE.items():
         print(f"\n⏳ Aguardando 10 minutos antes da próxima etapa...")
