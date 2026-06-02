@@ -1,3 +1,12 @@
+# evaluation-contracts-indy-besu-distributed
+
+Variante distribuída baseada no repositório 
+[evaluation-contracts-indy-besu](https://github.com/jeffsonsousa/evaluation-contracts-indy-besu) 
+
+## Diferenças em relação ao original
+
+- Adaptação para execução dos testes em ambiente distribuido
+
 # 📘 DID Performance Evaluation using Hyperledger Caliper
 
 Este repositório apresenta um ambiente completo para avaliação de desempenho de contratos inteligentes implantados em redes permissionadas baseadas no **Hyperledger Besu**, utilizando o framework **Hyperledger Caliper**. Os testes têm como foco contratos voltados à gestão de identidades descentralizadas (DID), definição de credenciais, revogação e controle de acesso.
