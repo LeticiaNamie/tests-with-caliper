@@ -38,16 +38,23 @@ monitors:
   resource:
     - module: prometheus
       options:
-        url: "http://NODE1_IP:9545"
+        url: "http://localhost:9090"
         interval: 5
         metrics:
-          include: [process_cpu_seconds_total, process_resident_memory_bytes]
-    - module: prometheus
-      options:
-        url: "http://NODE2_IP:9545"
-        interval: 5
-        metrics:
-          include: [process_cpu_seconds_total, process_resident_memory_bytes]
+          include: ["node1", "node2"]
+          queries:
+            - name: CPU(%)
+              query: rate(process_cpu_seconds_total[1m])
+              statistic: avg
+              step: 1
+              multiplier: 100
+              label: instance
+            - name: Memory(MB)
+              query: process_resident_memory_bytes
+              statistic: avg
+              step: 1
+              multiplier: 0.000001
+              label: instance
 
 observer:
   type: local
