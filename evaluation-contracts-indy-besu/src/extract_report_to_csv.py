@@ -41,9 +41,9 @@ def extract_summary_from_html(file_path):
                     except ValueError:
                         print(f"⚠ Erro ao converter dados no arquivo {file_path}: {cols}")
 
-        # --- RECURSOS POR CONTAINER ---
+        # --- RECURSOS VIA DOCKER MONITOR ---
         if not resource_data and table.find('th') and 'CPU%(max)' in table.text:
-            print(f"✅ Tabela de recursos detectada no arquivo: {file_path}")
+            print(f"✅ Tabela de recursos (Docker) detectada no arquivo: {file_path}")
             rows = table.find_all('tr')[1:]  # apenas 1 header
             for row in rows:
                 cols = [td.text.strip().replace('-', '0') for td in row.find_all('td')]
@@ -65,6 +65,33 @@ def extract_summary_from_html(file_path):
                         })
                     except ValueError:
                         print(f"⚠ Erro ao converter dados de recurso no arquivo {file_path}: {cols}")
+
+        # --- RECURSOS VIA PROMETHEUS MONITOR ---
+        if not resource_data and table.find('th') and 'Prometheus Query' in table.text:
+            print(f"✅ Tabela de recursos (Prometheus) detectada no arquivo: {file_path}")
+            rows = table.find_all('tr')[1:]  # pula header
+            current_metric = None
+            current_query = None
+            for row in rows:
+                cols = [td.text.strip() for td in row.find_all('td')]
+                if len(cols) < 4:
+                    continue
+                if cols[0]:
+                    current_metric = cols[0]
+                    current_query = cols[1]
+                name = cols[2]
+                value_str = cols[3]
+                if not name or name == 'N/A':
+                    continue
+                try:
+                    resource_data.append({
+                        'Metric': current_metric,
+                        'Query': current_query,
+                        'Name': name,
+                        'Value': float(value_str) if value_str not in ('', '-') else None,
+                    })
+                except ValueError:
+                    print(f"⚠ Erro ao converter dados Prometheus no arquivo {file_path}: {cols}")
     return summary_data, resource_data
 
 
