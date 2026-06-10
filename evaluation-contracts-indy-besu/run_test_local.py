@@ -14,6 +14,7 @@ BENCHMARK_FILES_BAK = {
 }
 
 BENCHMARK_FILES_SEPARATE = {
+    "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
     "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml'
 }
 
