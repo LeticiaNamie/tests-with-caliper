@@ -41,7 +41,7 @@ monitors:
         url: "http://localhost:9090"
         interval: 5
         metrics:
-          include: ["node1", "node2"]
+          include: ["node1", "node2", "node3", "node4", "node5", "node6"]
           queries:
             - name: CPU(%)
               query: rate(process_cpu_seconds_total[1m])
