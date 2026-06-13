@@ -4,18 +4,12 @@ from datetime import datetime
 
 # Caminhos para cada configuração de função
 BENCHMARK_FILES = {
-    "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml'
-}
-
-BENCHMARK_FILES_BAK = {
-    "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
-    "updateDid": 'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
-    "createSchema": 'benchmarks/scenario/SchemaRegistry/config.yaml'
-}
-
-BENCHMARK_FILES_SEPARATE = {
-    "createDid": 'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
-    "createRevocationRegistry": 'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml'
+    "createDid":                    'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
+    "updateDid":                    'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
+    "createSchema":                 'benchmarks/scenario/SchemaRegistry/config.yaml',
+    "createCredentialDefinition":   'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
+    "createRevocationRegistry":     'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
+    "createOrUpdateEntry":          'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml',
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
@@ -75,9 +69,13 @@ if __name__ == "__main__":
 
     setup_issuer()
 
-    for function_name, benchmark_file in BENCHMARK_FILES_SEPARATE.items():
+    for repetition in range(1, 6):
         print(f"\n{'='*50}")
-        print(f"🚀 Iniciando testes para função: {function_name}")
+        print(f"🔁 Repetição {repetition}/5")
         print(f"{'='*50}")
-        for tps in TPS_LIST:
-            run_test(tps, function_name, benchmark_file)
+        for function_name, benchmark_file in BENCHMARK_FILES.items():
+            print(f"\n{'='*50}")
+            print(f"🚀 Iniciando testes para função: {function_name}")
+            print(f"{'='*50}")
+            for tps in TPS_LIST:
+                run_test(tps, function_name, benchmark_file)
