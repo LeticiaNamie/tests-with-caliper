@@ -13,7 +13,7 @@ BENCHMARK_FILES = {
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
-TPS_LIST = [20]
+TPS_LIST = [20, 40, 60, 80, 100, 120]
 
 # Atualiza o valor de TPS no arquivo de benchmark YAML
 def update_tps_in_file(file_path, tps):
