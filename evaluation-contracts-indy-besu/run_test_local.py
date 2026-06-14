@@ -42,7 +42,6 @@ def run_test(tps, function_name, benchmark_file):
         '--caliper-workspace', './',
         '--caliper-benchconfig', benchmark_file,
         '--caliper-networkconfig', 'networks/besu/networkconfig.json',
-        '--caliper-bind-sut', 'besu:latest',
         '--caliper-flow-skip-install'
     ]
 
@@ -53,6 +52,19 @@ def run_test(tps, function_name, benchmark_file):
         print(f"✅ Relatório salvo em {report_path}")
     else:
         print(f"⚠️ Relatório não encontrado para {function_name} @ {tps} TPS.")
+
+# Faz o bind do Caliper com Besu uma única vez antes de todos os testes
+def bind_caliper():
+    print("\n🔗 Realizando bind do Caliper com Besu...")
+    result = subprocess.run([
+        'npx', 'caliper', 'bind',
+        '--caliper-bind-sut', 'besu:latest',
+        '--caliper-bind-cwd', './'
+    ])
+    if result.returncode != 0:
+        print("❌ Bind do Caliper falhou")
+        exit(1)
+    print("✅ Bind concluído")
 
 # Garante que o DID issuer existe na chain antes dos testes
 def setup_issuer():
@@ -67,6 +79,7 @@ def setup_issuer():
 if __name__ == "__main__":
     import time
 
+    bind_caliper()
     setup_issuer()
 
     for repetition in range(1, 6):
