@@ -86,13 +86,13 @@ if __name__ == "__main__":
         print(f"\n{'='*50}")
         print(f"🔁 Repetição {repetition}/5")
         print(f"{'='*50}")
-        for function_name, benchmark_file in BENCHMARK_FILES.items():
+        for i, (function_name, benchmark_file) in enumerate(BENCHMARK_FILES.items()):
             print(f"\n{'='*50}")
             print(f"🚀 Iniciando testes para função: {function_name}")
             print(f"{'='*50}")
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
 
-        if repetition < 5:
-            print(f"\n⏳ Aguardando 120s antes da repetição {repetition + 1}/5...")
-            time.sleep(120)
+            if i < len(BENCHMARK_FILES) - 1:
+                print(f"\n⏳ Aguardando 60s para Besu estabilizar antes da próxima função...")
+                time.sleep(60)
