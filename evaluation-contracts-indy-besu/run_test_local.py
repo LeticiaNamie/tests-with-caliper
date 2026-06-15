@@ -31,6 +31,16 @@ def update_tps_in_file(file_path, tps):
     with open(file_path, 'w') as file:
         file.writelines(new_lines)
 
+def _report_has_results(path):
+    """Retorna True se o report.html contém ao menos uma transação com sucesso.
+    Caliper sempre gera o HTML (mesmo em falha), mas sem dados nas células <td>."""
+    with open(path, 'r', errors='replace') as f:
+        content = f.read()
+    # A linha de dados da tabela de resultados só aparece quando há rounds concluídos.
+    # "Send Rate (TPS)" aparece no cabeçalho sempre; os valores numéricos em <td> só
+    # existem quando pelo menos um round produziu resultados.
+    return '<td>' in content
+
 # Executa o Caliper para uma função e TPS, com retry se WS não estiver pronto
 def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
     update_tps_in_file(benchmark_file, tps)
@@ -48,15 +58,17 @@ def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
 
     for attempt in range(1, max_retries + 1):
         subprocess.run(cmd)
-        if os.path.exists('report.html'):
+        if os.path.exists('report.html') and _report_has_results('report.html'):
             os.rename('report.html', report_path)
             print(f"✅ Relatório salvo em {report_path}")
             return
+        if os.path.exists('report.html'):
+            os.remove('report.html')
         if attempt < max_retries:
-            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} falhou (WS não disponível). Aguardando {retry_delay}s...")
+            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} falhou (sem dados válidos). Aguardando {retry_delay}s...")
             time.sleep(retry_delay)
 
-    print(f"⚠️ Relatório não encontrado para {function_name} @ {tps} TPS após {max_retries} tentativas.")
+    print(f"❌ Nenhum resultado válido para {function_name} @ {tps} TPS após {max_retries} tentativas.")
 
 # Faz o bind do Caliper com Besu uma única vez antes de todos os testes
 def bind_caliper():
