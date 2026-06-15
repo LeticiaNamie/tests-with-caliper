@@ -1,5 +1,6 @@
 import os
 import subprocess
+import time
 from datetime import datetime
 
 # Caminhos para cada configuração de função
@@ -81,8 +82,6 @@ def setup_issuer():
 
 # Executa todos os testes
 if __name__ == "__main__":
-    import time
-
     bind_caliper()
     setup_issuer()
 
