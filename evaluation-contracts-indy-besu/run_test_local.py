@@ -30,8 +30,8 @@ def update_tps_in_file(file_path, tps):
     with open(file_path, 'w') as file:
         file.writelines(new_lines)
 
-# Executa o Caliper para uma função e TPS
-def run_test(tps, function_name, benchmark_file):
+# Executa o Caliper para uma função e TPS, com retry se WS não estiver pronto
+def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
     update_tps_in_file(benchmark_file, tps)
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     report_dir = f"src/reports/{function_name}"
@@ -45,13 +45,17 @@ def run_test(tps, function_name, benchmark_file):
         '--caliper-flow-skip-install'
     ]
 
-    subprocess.run(cmd)
+    for attempt in range(1, max_retries + 1):
+        subprocess.run(cmd)
+        if os.path.exists('report.html'):
+            os.rename('report.html', report_path)
+            print(f"✅ Relatório salvo em {report_path}")
+            return
+        if attempt < max_retries:
+            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} falhou (WS não disponível). Aguardando {retry_delay}s...")
+            time.sleep(retry_delay)
 
-    if os.path.exists('report.html'):
-        os.rename('report.html', report_path)
-        print(f"✅ Relatório salvo em {report_path}")
-    else:
-        print(f"⚠️ Relatório não encontrado para {function_name} @ {tps} TPS.")
+    print(f"⚠️ Relatório não encontrado para {function_name} @ {tps} TPS após {max_retries} tentativas.")
 
 # Faz o bind do Caliper com Besu uma única vez antes de todos os testes
 def bind_caliper():
@@ -86,13 +90,9 @@ if __name__ == "__main__":
         print(f"\n{'='*50}")
         print(f"🔁 Repetição {repetition}/5")
         print(f"{'='*50}")
-        for i, (function_name, benchmark_file) in enumerate(BENCHMARK_FILES.items()):
+        for function_name, benchmark_file in BENCHMARK_FILES.items():
             print(f"\n{'='*50}")
             print(f"🚀 Iniciando testes para função: {function_name}")
             print(f"{'='*50}")
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
-
-            if i < len(BENCHMARK_FILES) - 1:
-                print(f"\n⏳ Aguardando 60s para Besu estabilizar antes da próxima função...")
-                time.sleep(60)
