@@ -57,7 +57,10 @@ def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
     ]
 
     for attempt in range(1, max_retries + 1):
-        subprocess.run(cmd)
+        try:
+            subprocess.run(cmd, timeout=120)
+        except subprocess.TimeoutExpired:
+            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} travou (timeout 120s).")
         if os.path.exists('report.html') and _report_has_results('report.html'):
             os.rename('report.html', report_path)
             print(f"✅ Relatório salvo em {report_path}")
@@ -107,3 +110,6 @@ if __name__ == "__main__":
             print(f"{'='*50}")
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
+        if repetition < 5:
+            print(f"\n⏳ Aguardando 60s para o Besu recuperar antes da repetição {repetition + 1}...")
+            time.sleep(60)
