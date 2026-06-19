@@ -42,7 +42,7 @@ monitors:
           include: ["node1", "node2", "node3", "node4", "node5", "node6"]
           queries:
             - name: CPU(%)
-              query: rate(process_cpu_seconds_total[1m])
+              query: irate(process_cpu_seconds_total[10s])
               statistic: avg
               step: 1
               multiplier: 100

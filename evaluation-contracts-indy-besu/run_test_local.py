@@ -111,6 +111,4 @@ if __name__ == "__main__":
             print(f"{'='*50}")
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
-        if repetition < 5:
-            print(f"\n⏳ Aguardando 60s para o Besu recuperar antes da repetição {repetition + 1}...")
-            time.sleep(60)
+                time.sleep(10)
