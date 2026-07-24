@@ -16,7 +16,7 @@ test:
     This is an example benchmark for Caliper, to test the backend DLT's
     performance with simple account opening & querying transactions.
   workers:
-    number: 1
+    number: 5
   rounds:
     - label: CreateSchema
       description: >-
@@ -38,7 +38,7 @@ monitors:
         url: "http://localhost:9090"
         interval: 5
         metrics:
-          include: ["node1", "node2", "node3", "node4", "node5", "node6"]
+          include: ["^node1$", "^node2$", "^node3$", "^node4$", "^node5$", "^node6$"]
           queries:
             - name: CPU(%)
               query: irate(process_cpu_seconds_total[10s])
