@@ -9,6 +9,7 @@
         "contractAddress": "YOUR IndyDidRegistry Address",
         "fromAddress": "YOUR Address",
         "fromAddressPrivateKey": "YOUR private key",
+        "fromAddressSeed": "0c1db9de96da5d09500307ceed81d5827c0ecc08662efc9d5c02f7a43aee1300",
         "transactionConfirmationBlocks": 1,
         "contracts": {
             "IndyDidRegistry": {

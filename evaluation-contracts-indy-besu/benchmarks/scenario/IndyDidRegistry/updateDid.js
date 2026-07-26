@@ -1,15 +1,14 @@
 'use strict';
 
 const OperationBase = require('./utils/operation-base');
-const { UPDATE_DID } = require('../../../networks/besu/setup_ids.json');
 
 function generateString(tam) {
     const base58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-    let result = '';
+    let randomString = '';
     for (let i = 0; i < tam; i++) {
-        result += base58chars.charAt(Math.floor(Math.random() * base58chars.length));
+        randomString += base58chars.charAt(Math.floor(Math.random() * base58chars.length));
     }
-    return result;
+    return randomString;
 }
 
 class UpdateDid extends OperationBase {
@@ -17,15 +16,22 @@ class UpdateDid extends OperationBase {
         super();
     }
 
+    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
+
+        // Cada worker usa sua propria conta (fromAddressSeed), entao precisa
+        // criar e ser dono do proprio DID antes de poder atualiza-lo
+        // (IndyDidRegistry.updateDid exige msg.sender == criador do DID).
+        // O identificador (parte apos o ultimo ':') precisa ter exatamente 21
+        // ou 22 caracteres (IndyDidValidator.validateDid), por isso nao da pra
+        // prefixar com "Wrk<workerIndex>" sem estourar o tamanho.
+        this.did = `did:indy2:indy_besu:${generateString(22)}`;
+        const createDocument = [[], this.did, [], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", "Ed25519VerificationKey2018", "did:indy2:testnet:N22WedHLJdFf4yMaDXdhJcL97", "HAFkhqbPbor781QCMfNvr6oQTTixK9U7gZmDV7pszTHp", ""]], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", ["1", "1", "1", "1", "1"]]], [], [], [], [], [], []];
+        await this.sutAdapter.sendRequests(this.createConnectorRequest('createDid', createDocument));
+    }
+
     async submitTransaction() {
-        const document = [
-            [],
-            UPDATE_DID,
-            [],
-            [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", "Ed25519VerificationKey2018", `did:indy2:testnet:${generateString(22)}`, generateString(44), ""]],
-            [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", ["1", "1", "1", "1", "1"]]],
-            [], [], [], [], [], []
-        ];
+        const document = [[], this.did, [], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", "Ed25519VerificationKey2018", "did:indy2:testnet:MUDA_N22WedHLJdFf4yMaDXdhJcL98", "MUDA_HAFkhqbPbor781QCMfNvr6oQTTixK9U7gZmDV7pszTHp", ""]], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", ["1", "1", "1", "1", "1"]]], [], [], [], [], [], []];
         await this.sutAdapter.sendRequests(this.createConnectorRequest('updateDid', document));
     }
 }

@@ -1,7 +1,6 @@
 'use strict';
 
 const OperationBase = require('./utils/operation-base');
-const { ISSUER_DID } = require('../../../networks/besu/setup_ids.json');
 
 function generateString(tam) {
     const base58chars = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
@@ -17,16 +16,34 @@ class CreateSchema extends OperationBase {
         super();
     }
 
+    async initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext) {
+        await super.initializeWorkloadModule(workerIndex, totalWorkers, roundIndex, roundArguments, sutAdapter, sutContext);
+
+        // SchemaRegistry.createSchema exige que msg.sender seja dono (criador) do
+        // DID emissor (issuerId). Cada worker usa sua propria conta, entao precisa
+        // criar e ser dono do proprio DID emissor antes de criar schemas.
+        // O identificador (parte apos o ultimo ':') precisa ter exatamente 21
+        // ou 22 caracteres (IndyDidValidator.validateDid), por isso nao da pra
+        // prefixar com "Wrk<workerIndex>" sem estourar o tamanho.
+        this.issuerDid = `did:indy2:indy_besu:${generateString(22)}`;
+        const didDocument = [[], this.issuerDid, [], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", "Ed25519VerificationKey2018", "did:indy2:testnet:N22WedHLJdFf4yMaDXdhJcL97", "HAFkhqbPbor781QCMfNvr6oQTTixK9U7gZmDV7pszTHp", ""]], [["did:indy2:indy_besu:RQDxoJ2Mz3WuyqaqsjVTdN#KEY-1", ["1", "1", "1", "1", "1"]]], [], [], [], [], [], []];
+        await this.sutAdapter.sendRequests({
+            contract: 'IndyDidRegistry',
+            verb: 'createDid',
+            args: [didDocument],
+            readOnly: false
+        });
+    }
+
     async submitTransaction() {
-        const did_end = generateString(4)
+        const did_end = generateString (4)
         const schema = [
-            `${ISSUER_DID}/anoncreds/v0/SCHEMA/GradeSch${did_end}/1.0`,
-            ISSUER_DID,
+            `${this.issuerDid}/anoncreds/v0/SCHEMA/GradeSch${did_end}/${did_end}`,
+            this.issuerDid,
             `GradeSch${did_end}`,
-            "1.0",
+            did_end,
             ["grade", "subject"]
         ]
-        // const schema = ["did:indy2:indy_besu:MRDxoJ2Mz4ZuyqaqsjVTdN/anoncreds/v0/SCHEMA/ScoreSch233/233","did:indy2:indy_besu:MRDxoJ2Mz4ZuyqaqsjVTdN","ScoreSch233","233",["grade", "score"]]
         await this.sutAdapter.sendRequests(this.createConnectorRequest('createSchema', schema));
     }
 }
