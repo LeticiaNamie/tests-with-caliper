@@ -35,7 +35,7 @@ test:
     This is an example benchmark for Caliper, to test the backend DLT's
     performance with simple account opening & querying transactions.
   workers:
-    number: 5
+    number: 4
   rounds:
     - label: updateDid
       description: >-
