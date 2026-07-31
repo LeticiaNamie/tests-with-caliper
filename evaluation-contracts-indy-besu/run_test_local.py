@@ -1,6 +1,8 @@
+import json
 import os
 import subprocess
 import time
+import urllib.request
 from datetime import datetime
 
 # Caminhos para cada configuração de função
@@ -15,6 +17,45 @@ BENCHMARK_FILES = {
 
 # TPS a ser testado (20 a 120, de 20 em 20)
 TPS_LIST = [100,250,400,550,700]
+
+# Mesma variável usada pelo setup_issuer.js (exportada pelo run_caliper_tests.sh);
+# fallback local para quando o script roda fora da EC2 provisionada.
+RPC_URL = os.environ.get('HTTP_RPC_URL', 'http://127.0.0.1:8545')
+
+
+def get_txpool_pending_count(rpc_url):
+    """Consulta txpool_besuStatistics no Node-1 e retorna (localCount + remoteCount).
+    Retorna None se a chamada falhar (rede instável, RPC temporariamente indisponível)."""
+    payload = json.dumps({
+        "jsonrpc": "2.0",
+        "method": "txpool_besuStatistics",
+        "params": [],
+        "id": 1
+    }).encode()
+    req = urllib.request.Request(
+        rpc_url, data=payload, headers={"Content-Type": "application/json"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            result = json.loads(resp.read()).get("result", {})
+            return result.get("localCount", 0) + result.get("remoteCount", 0)
+    except Exception:
+        return None
+
+
+def wait_txpool_drain(rpc_url=RPC_URL, max_wait=120, threshold=10, poll_interval=5):
+    """Espera o pool de transações pendentes do Node-1 baixar antes de seguir para a
+    próxima rodada. Rodadas de TPS alto podem deixar milhares de tx pendentes; sem
+    esperar o pool esvaziar, a próxima rodada (mesmas contas, nonces sequenciais)
+    nasce presa atrás do backlog e falha em cascata, mesmo com retry."""
+    start = time.time()
+    while time.time() - start < max_wait:
+        pending = get_txpool_pending_count(rpc_url)
+        if pending is None or pending <= threshold:
+            return
+        print(f"⏳ Aguardando txpool esvaziar: {pending} tx pendentes...")
+        time.sleep(poll_interval)
+    print(f"⚠️ txpool não baixou de {threshold} após {max_wait}s — seguindo mesmo assim.")
 
 # Atualiza o valor de TPS no arquivo de benchmark YAML
 def update_tps_in_file(file_path, tps):
@@ -71,6 +112,7 @@ def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
         if attempt < max_retries:
             print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} falhou (sem dados válidos). Aguardando {retry_delay}s...")
             time.sleep(retry_delay)
+            wait_txpool_drain()
 
     print(f"❌ Nenhum resultado válido para {function_name} @ {tps} TPS após {max_retries} tentativas.")
 
@@ -112,3 +154,4 @@ if __name__ == "__main__":
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
                 time.sleep(10)
+                wait_txpool_drain()
