@@ -99,9 +99,9 @@ def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
 
     for attempt in range(1, max_retries + 1):
         try:
-            subprocess.run(cmd, timeout=120)
+            subprocess.run(cmd, timeout=200)
         except subprocess.TimeoutExpired:
-            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} travou (timeout 120s).")
+            print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} travou (timeout 200s).")
         subprocess.run(['pkill', '-f', 'caliper launch worker'], stderr=subprocess.DEVNULL)
         if os.path.exists('report.html') and _report_has_results('report.html'):
             os.rename('report.html', report_path)
