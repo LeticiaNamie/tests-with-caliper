@@ -16,7 +16,7 @@ BENCHMARK_FILES = {
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
-TPS_LIST = [200,400,600,800,1000]
+TPS_LIST = [1000,5000,10000,20000,50000,100000]
 
 # Mesma variável usada pelo setup_issuer.js (exportada pelo run_caliper_tests.sh);
 # fallback local para quando o script roda fora da EC2 provisionada.
@@ -143,7 +143,7 @@ if __name__ == "__main__":
     bind_caliper()
     setup_issuer()
 
-    for repetition in range(1, 6):
+    for repetition in range(1, 2):
         print(f"\n{'='*50}")
         print(f"🔁 Repetição {repetition}/5")
         print(f"{'='*50}")
