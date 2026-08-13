@@ -16,7 +16,7 @@ BENCHMARK_FILES = {
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
-TPS_LIST = [1000,5000,10000,20000,50000,100000]
+TPS_LIST = [3000,5000,10000,20000,50000,100000]
 
 # Mesma variável usada pelo setup_issuer.js (exportada pelo run_caliper_tests.sh);
 # fallback local para quando o script roda fora da EC2 provisionada.
