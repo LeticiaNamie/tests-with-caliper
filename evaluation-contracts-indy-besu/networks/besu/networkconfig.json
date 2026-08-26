@@ -11,7 +11,7 @@
         "fromAddressPrivateKey": "YOUR private key",
         "fromAddressSeed": "0c1db9de96da5d09500307ceed81d5827c0ecc08662efc9d5c02f7a43aee1300",
         "transactionConfirmationBlocks": 1,
-        "transactionBlockTimeout": 75,
+        "transactionBlockTimeout": 300,
         "contracts": {
             "IndyDidRegistry": {
                 "address": "0xC76968EF5d5B742f60a7946867F29F0B72C82884",
