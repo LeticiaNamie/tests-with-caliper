@@ -7,16 +7,14 @@ from datetime import datetime
 
 # Caminhos para cada configuração de função
 BENCHMARK_FILES = {
-    "createDid":                    'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
-    "updateDid":                    'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
-    "createSchema":                 'benchmarks/scenario/SchemaRegistry/config.yaml',
-    "createCredentialDefinition":   'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
-    "createRevocationRegistry":     'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
-    "createOrUpdateEntry":          'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml',
+    "createDid":                    'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml'
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
-TPS_LIST = [2000,3000,5000]
+TPS_LIST = [1000]
+
+# Quantidade de repetições completas da varredura (todas as funções x todos os TPS)
+REPETITIONS = 1
 
 # Mesma variável usada pelo setup_issuer.js (exportada pelo run_caliper_tests.sh);
 # fallback local para quando o script roda fora da EC2 provisionada.
@@ -143,9 +141,9 @@ if __name__ == "__main__":
     bind_caliper()
     setup_issuer()
 
-    for repetition in range(1, 2):
+    for repetition in range(1, REPETITIONS + 1):
         print(f"\n{'='*50}")
-        print(f"🔁 Repetição {repetition}/5")
+        print(f"🔁 Repetição {repetition}/{REPETITIONS}")
         print(f"{'='*50}")
         for function_name, benchmark_file in BENCHMARK_FILES.items():
             print(f"\n{'='*50}")
