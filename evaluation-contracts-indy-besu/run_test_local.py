@@ -11,7 +11,7 @@ BENCHMARK_FILES = {
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
-TPS_LIST = [2000]
+TPS_LIST = [1000]
 
 # Quantidade de repetições completas da varredura (todas as funções x todos os TPS)
 REPETITIONS = 1
