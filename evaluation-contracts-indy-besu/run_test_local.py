@@ -46,6 +46,16 @@ def get_txpool_pending_count(rpc_url):
         return None
 
 
+def drain_max_wait_for_tps(tps):
+    """Orçamento de espera pro txpool esvaziar, proporcional ao TPS do round que
+    acabou de rodar — TPS mais alto deixa um backlog maior, então precisa de mais
+    tempo real pra drenar antes da próxima rodada (mesma lógica pros nonces
+    sequenciais das mesmas contas). Piso de 120s preserva o comportamento antigo
+    caso o TPS_LIST volte a incluir valores baixos (ex.: a faixa de 20-120 TPS
+    usada antes de 2026-07)."""
+    return max(120, int(120 * (tps / 1000)))
+
+
 def wait_txpool_drain(rpc_url=RPC_URL, max_wait=120, threshold=10, poll_interval=5):
     """Espera o pool de transações pendentes do Node-1 baixar antes de seguir para a
     próxima rodada. Rodadas de TPS alto podem deixar milhares de tx pendentes; sem
@@ -115,7 +125,7 @@ def run_test(tps, function_name, benchmark_file, max_retries=3, retry_delay=15):
         if attempt < max_retries:
             print(f"⚠️ {function_name}@{tps}TPS tentativa {attempt}/{max_retries} falhou (sem dados válidos). Aguardando {retry_delay}s...")
             time.sleep(retry_delay)
-            wait_txpool_drain()
+            wait_txpool_drain(max_wait=drain_max_wait_for_tps(tps))
 
     print(f"❌ Nenhum resultado válido para {function_name} @ {tps} TPS após {max_retries} tentativas.")
 
@@ -157,4 +167,4 @@ if __name__ == "__main__":
             for tps in TPS_LIST:
                 run_test(tps, function_name, benchmark_file)
                 time.sleep(10)
-                wait_txpool_drain()
+                wait_txpool_drain(max_wait=drain_max_wait_for_tps(tps))
