@@ -7,12 +7,7 @@ from datetime import datetime
 
 # Caminhos para cada configuração de função
 BENCHMARK_FILES = {
-    "createDid":                    'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml',
-    "updateDid":                    'benchmarks/scenario/IndyDidRegistry/config-updateDid.yaml',
-    "createSchema":                 'benchmarks/scenario/SchemaRegistry/config.yaml',
-    "createCredentialDefinition":   'benchmarks/scenario/CredentialDefinitionRegistry/config.yaml',
-    "createRevocationRegistry":     'benchmarks/scenario/RevocationRegistry/config_createRevocationRegistry.yaml',
-    "createOrUpdateEntry":          'benchmarks/scenario/RevocationRegistry/config_createOrUpdateEntry.yaml'
+    "createDid":                    'benchmarks/scenario/IndyDidRegistry/config-createDid.yaml'
 }
 
 # TPS a ser testado (20 a 120, de 20 em 20)
