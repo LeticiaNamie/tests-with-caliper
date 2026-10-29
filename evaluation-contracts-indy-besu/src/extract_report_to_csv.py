@@ -84,8 +84,10 @@ def extract_summary_from_html(file_path):
                         'Name': rec['Name'],
                         'CPU%(max)': float(rec['CPU%(max)']),
                         'CPU%(avg)': float(rec['CPU%(avg)']),
-                        mem_max_col: float(rec[mem_max_col]),
-                        mem_avg_col: float(rec[mem_avg_col]),
+                        # Caliper 0.5.0 imprime '-' na memória do monitor process (bug do
+                        # normalizeStats, que recebe string); vira vazio no CSV.
+                        mem_max_col: float(rec[mem_max_col]) if rec[mem_max_col] != '-' else None,
+                        mem_avg_col: float(rec[mem_avg_col]) if rec[mem_avg_col] != '-' else None,
                     })
                 except (KeyError, ValueError):
                     print(f"⚠ Erro ao converter dados de workers no arquivo {file_path}: {cols}")
